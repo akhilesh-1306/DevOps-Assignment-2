@@ -82,3 +82,76 @@ This will start:
 ```sh
 docker ps
 ```
+
+# Jenkins CI/CD Pipeline Setup
+
+This repository contains a CI/CD pipeline implementation using Jenkins for automated build, test, and deployment processes.
+
+## 🔧 Jenkins Setup
+
+### Step 1: Installation
+- Installed Jenkins server running on port 9090
+- Required plugins:
+  - Pipeline
+  - Docker Pipeline
+  - SonarQube Scanner
+  - Blue Ocean
+  - Git Plugin
+
+### Step 2: Credentials Configuration
+- GitHub Access Token (for repository access)
+- Docker Hub Credentials:
+  - Username: Your Docker Hub username
+  - Password: Access Token (generated from Docker Hub settings)
+
+### Step 3: Pipeline Stages
+Our Jenkinsfile implements the following stages:
+
+1. **Clone Repository**: Fetches the latest code from GitHub
+2. **Build Docker Images**: Builds web-service and worker-service images
+3. **Tag & Push Images**: Tags images with 'latest' and pushes to Docker Hub
+4. **Run Containers**: Deploys containers (skipped if previous stage fails)
+5. **Cleanup**: Removes temporary files (skipped if pipeline fails)
+
+## 🐳 Docker Hub Integration
+
+### Authentication Setup
+We use Docker Hub Access Tokens instead of passwords:
+
+1. Go to Docker Hub → Account Settings → Security
+2. Generate a new Access Token
+3. In Jenkins:
+   - Navigate to Manage Jenkins → Manage Credentials
+   - Add new credential with:
+     - Username: Your Docker Hub username
+     - Password: The generated Access Token
+
+### Manual Image Push Commands
+If needed, images can be pushed manually:
+
+```bash
+docker login
+docker tag worker-service <dockerhub-username>/worker-service:latest
+docker push <dockerhub-username>/worker-service:latest
+
+📌 Troubleshooting
+Plugin Dependency Issues
+Error:
+Copyjava.io.IOException: Failed to load: Docker Pipeline
+Update required: Pipeline: Declarative to be updated to 2.2247 or higher
+Fix:
+Go to Manage Jenkins → Manage Plugins → Update all pending plugins → Restart Jenkins
+Docker Hub Push Failure
+
+Error:
+CopyERROR: Could not find credentials matching docker-hub
+Fix:
+Verify Docker Hub credentials are correctly stored in Jenkins
+Use Access Token instead of password
+Ensure correct credential ID is referenced in the Jenkinsfile
+
+🎯 Summary
+
+✅ Automated build, test, and deployment pipeline
+✅ Remote image storage via Docker Hub integration
+✅ Simplified local development with Docker Compose
