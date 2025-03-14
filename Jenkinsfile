@@ -25,9 +25,9 @@ pipeline {
             steps {
                 script {
                     def nodejs = tool name: "${NODE_VERSION}", type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
-                    env.PATH = "${nodejs}/bin:${env.PATH}"
+                    env.PATH = "${nodejs}/bin;${env.PATH}"
                 }
-                sh '''
+                bat '''
                 cd web-service && npm install
                 cd ../worker-service && npm install
                 '''
@@ -38,8 +38,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv("${SONARQUBE_URL}") {
-                        sh '''
-                        # Ensure 'npm run sonar' is correctly configured in package.json for both services
+                        bat '''
                         cd web-service && npm run sonar  
                         cd ../worker-service && npm run sonar  
                         '''
@@ -50,8 +49,7 @@ pipeline {
 
         stage('Test Web and Worker Services') {
             steps {
-                sh '''
-                # Ensure your test scripts are properly set in package.json
+                bat '''
                 cd web-service && npm test  
                 cd ../worker-service && npm test  
                 '''
@@ -60,10 +58,9 @@ pipeline {
 
         stage('Build Docker Images') {
             steps {
-                sh '''
-                # Build Docker images
-                docker build -t ${DOCKER_IMAGE_WEB} ./web-service  
-                docker build -t ${DOCKER_IMAGE_WORKER} ./worker-service  
+                bat '''
+                docker build -t %DOCKER_IMAGE_WEB% ./web-service  
+                docker build -t %DOCKER_IMAGE_WORKER% ./worker-service  
                 '''
             }
         }
@@ -71,14 +68,12 @@ pipeline {
         stage('Tag and Push Docker Images to Docker Hub') {
             steps {
                 withDockerRegistry([credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/']) {
-                    sh '''
-                    # Tag images with Docker Hub username
-                    docker tag ${DOCKER_IMAGE_WEB} ${DOCKER_HUB_USER}/${DOCKER_IMAGE_WEB}
-                    docker tag ${DOCKER_IMAGE_WORKER} ${DOCKER_HUB_USER}/${DOCKER_IMAGE_WORKER}
+                    bat '''
+                    docker tag %DOCKER_IMAGE_WEB% %DOCKER_HUB_USER%/%DOCKER_IMAGE_WEB%
+                    docker tag %DOCKER_IMAGE_WORKER% %DOCKER_HUB_USER%/%DOCKER_IMAGE_WORKER%
 
-                    # Push images to Docker Hub
-                    docker push ${DOCKER_HUB_USER}/${DOCKER_IMAGE_WEB}  
-                    docker push ${DOCKER_HUB_USER}/${DOCKER_IMAGE_WORKER}  
+                    docker push %DOCKER_HUB_USER%/%DOCKER_IMAGE_WEB%  
+                    docker push %DOCKER_HUB_USER%/%DOCKER_IMAGE_WORKER%  
                     '''
                 }
             }
@@ -86,13 +81,13 @@ pipeline {
 
         stage('Run Docker Containers') {
             steps {
-                sh 'docker-compose up -d'
+                bat 'docker-compose up -d'
             }
         }
 
         stage('Cleanup') {
             steps {
-                sh 'docker system prune -f'  // Cleans up unused Docker data
+                bat 'docker system prune -f'  // Cleans up unused Docker data
             }
         }
     }
