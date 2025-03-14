@@ -4,12 +4,16 @@
   "description": "",
   "main": "worker.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"No tests available\" && exit 0",
+    "sonar": "sonar-scanner -Dsonar.projectKey=worker-service -Dsonar.host.url=http://localhost:9000"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "mongoose": "^8.10.1"
+  },
+  "devDependencies": {
+    "sonar-scanner": "^3.1.0"
   }
 }

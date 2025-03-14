@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"No tests available\" && exit 0",
+    "sonar": "sonar-scanner -Dsonar.projectKey=web-service -Dsonar.host.url=http://localhost:9000"
   },
   "keywords": [],
   "author": "",
@@ -12,5 +13,8 @@
   "dependencies": {
     "express": "^4.21.2",
     "mongoose": "^8.10.1"
+  },
+  "devDependencies": {
+    "sonar-scanner": "^3.1.0"
   }
 }
