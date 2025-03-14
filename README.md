@@ -95,7 +95,6 @@ This repository contains a CI/CD pipeline implementation using Jenkins for autom
   - Pipeline
   - Docker Pipeline
   - SonarQube Scanner
-  - Blue Ocean
   - Git Plugin
 
 ### Step 2: Credentials Configuration
@@ -109,9 +108,10 @@ Our Jenkinsfile implements the following stages:
 
 1. **Clone Repository**: Fetches the latest code from GitHub
 2. **Build Docker Images**: Builds web-service and worker-service images
-3. **Tag & Push Images**: Tags images with 'latest' and pushes to Docker Hub
-4. **Run Containers**: Deploys containers (skipped if previous stage fails)
-5. **Cleanup**: Removes temporary files (skipped if pipeline fails)
+3. **Test the service**: Test the built services
+4. **Tag & Push Images**: Tags images with 'latest' and pushes to Docker Hub
+5. **Run Containers**: Deploys containers (skipped if previous stage fails)
+6. **Cleanup**: Removes temporary files (skipped if pipeline fails)
 
 ## 🐳 Docker Hub Integration
 
