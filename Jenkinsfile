@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_USER = 'akhileshnekar'
+        DOCKER_HUB_USER = 'rishijain20'
         DOCKER_IMAGE_WEB = 'web-service'
         DOCKER_IMAGE_WORKER = 'worker-service'
         
@@ -15,13 +15,13 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Repo cloning') {
             steps {
                 git branch: 'main', url: 'https://github.com/akhilesh-1306/DevOps-Assignment-2'
             }
         }
 
-        stage('Build Web and Worker Services') {
+        stage('Building services') {
             steps {
                 script {
                     def nodejs = tool name: "${NODE_VERSION}", type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
@@ -34,7 +34,7 @@ pipeline {
             }
         }
 
-        stage('Code Analysis with SonarQube') {
+        stage('SonarQube analysis') {
             steps {
                 script {
                     withSonarQubeEnv("${SONARQUBE_URL}") {
@@ -47,7 +47,7 @@ pipeline {
             }
         }
 
-        stage('Test Web and Worker Services') {
+        stage('Testing services') {
             steps {
                 bat '''
                 cd web-service && npm test  
@@ -56,7 +56,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker Images') {
+        stage('Building images') {
             steps {
                 bat '''
                 docker build -t %DOCKER_IMAGE_WEB% ./web-service  
@@ -65,9 +65,9 @@ pipeline {
             }
         }
 
-        stage('Tag and Push Docker Images to Docker Hub') {
+        stage('Pushing images to Docker Hub') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/']) {
+                withDockerRegistry([credentialsId: 'docker-hub-bcd7', url: 'https://index.docker.io/v1/']) {
                     bat '''
                     docker tag %DOCKER_IMAGE_WEB% %DOCKER_HUB_USER%/%DOCKER_IMAGE_WEB%
                     docker tag %DOCKER_IMAGE_WORKER% %DOCKER_HUB_USER%/%DOCKER_IMAGE_WORKER%
@@ -79,7 +79,7 @@ pipeline {
             }
         }
 
-        stage('Run Docker Containers') {
+        stage('Running containers') {
             steps {
                 bat 'docker-compose up -d'
             }
