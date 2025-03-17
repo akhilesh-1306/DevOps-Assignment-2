@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_USER = 'rishijain20'
+        DOCKER_HUB_USER = 'akhileshnekar'
         DOCKER_IMAGE_WEB = 'web-service'
         DOCKER_IMAGE_WORKER = 'worker-service'
         
@@ -67,7 +67,7 @@ pipeline {
 
         stage('Pushing images to Docker Hub') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub-bcd7', url: 'https://index.docker.io/v1/']) {
+                withDockerRegistry([credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/']) {
                     bat '''
                     docker tag %DOCKER_IMAGE_WEB% %DOCKER_HUB_USER%/%DOCKER_IMAGE_WEB%
                     docker tag %DOCKER_IMAGE_WORKER% %DOCKER_HUB_USER%/%DOCKER_IMAGE_WORKER%
